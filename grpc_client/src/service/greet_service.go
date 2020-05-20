@@ -44,7 +44,8 @@ func (*greetService) Greeting() {
 	names := []string{"Matthias", "Sonia", "Heidi", "Jochen"}
 
 	// create a channel of type struct
-	waitc := make(chan struct{})
+	//waitc := make(chan struct{})
+	waitc := make(chan bool)
 
 	// send messages to gRPC-Server in a go-routine
 	go func() {
@@ -68,9 +69,10 @@ func (*greetService) Greeting() {
 				logger.Error("Error while receiving Data from gRPC-Server", resErr)
 				break
 			}
-			fmt.Println("Result from gRPC-Server: %\n", res.GetResult())
+			fmt.Println(fmt.Sprintf("Result from gRPC-Server: %v", res.GetResult()))
 		}
-		close(waitc)
+		waitc <- true
+		//close(waitc)
 
 	}()
 	//block until everything is done
